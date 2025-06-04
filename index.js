@@ -1,12 +1,18 @@
 const express = require("express");
-const cors = require("cors");
 const app = express();
+
+const cors = require("cors");
+const corsOptions = {
+  origin: "*",
+  credentials: true,
+  optionSuccessStatus: 200,
+};
 
 const { initializeDatabase } = require("./db/db.connect");
 const Movie = require("./models/movie.models");
 
 app.use(express.json());
-app.use(cors())
+app.use(cors(corsOptions));
 
 initializeDatabase();
 
@@ -26,12 +32,10 @@ app.post("/movies/:movieId", async (req, res) => {
   try {
     const updatedMovie = await updateMovie(req.params.movieId, req.body);
     if (updatedMovie) {
-      res
-        .status(200)
-        .json({
-          message: "Updated movie successfully.",
-          updatedMovie: updatedMovie,
-        });
+      res.status(200).json({
+        message: "Updated movie successfully.",
+        updatedMovie: updatedMovie,
+      });
     } else {
       res.status(404).json({ error: "Movie not found" });
     }
